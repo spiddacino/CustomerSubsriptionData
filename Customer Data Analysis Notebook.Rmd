@@ -1,0 +1,24 @@
+---
+title: "Customer Data Analysis"
+output: html_notebook
+---
+
+
+```{r}
+# load data
+customers <- read.csv("data/customer_info.csv")
+```
+
+
+```{r}
+#view customer data
+summary(customers)
+```
+
+
+```{r}
+
+customers$gender <- factor(customers$gender)
+```
+
+
