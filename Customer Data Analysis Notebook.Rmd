@@ -2,8 +2,6 @@
 title: "Customer Data Analysis"
 output: html_notebook
 ---
-
-
 ```{r Loading Data}
 # load data
 customers <- read.csv("data/customer_info.csv")
