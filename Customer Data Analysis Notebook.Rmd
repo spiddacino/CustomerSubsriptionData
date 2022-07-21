@@ -3,8 +3,13 @@ title: "Customer Data Analysis"
 output: rmarkdown::github_document
 ---
 ```{r Loading Data}
-# load data
+# load customer data
 customers <- read.csv("data/customer_info.csv")
+```
+
+```{r CustomerDimension Check, echo=TRUE}
+#Identify number of records
+dim(customers)
 ```
 
 
@@ -12,11 +17,31 @@ customers <- read.csv("data/customer_info.csv")
 #view customer data
 summary(customers)
 ```
-
-
 ```{r}
+#Cleaning of Customer Data
 
+#convert gender column type to factor
 customers$gender <- factor(customers$gender)
+#remove unwanted column
+customers_clean <- customers[,c(2:4)]
 ```
 
+```{r}
+#view summary of cleaned data
+summary(customers_clean)
+```
+```{r}
+#view a subset of cleaned data
+head(customers_clean)
+```
+
+```{r}
+# load product data
+products <- read.csv("data/product_info.csv")
+```
+
+```{r}
+#view customer data
+summary(customers)
+```
 
