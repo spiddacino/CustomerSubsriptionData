@@ -11,8 +11,6 @@ customers <- read.csv("data/customer_info.csv")
 #Identify number of records
 dim(customers)
 ```
-
-
 ```{r Initial Data Summary, echo=TRUE}
 #view customer data
 summary(customers)
@@ -35,12 +33,26 @@ summary(customers_clean)
 head(customers_clean)
 ```
 
-```{r}
+```{r Product data loading, message=FALSE, warning=FALSE}
 # load product data
 products <- read.csv("data/product_info.csv")
 ```
 
 ```{r}
+#view products data
+summary(products)
+```
+
+```{r}
+# load cases data
+cases <- read.csv("data/customer_cases.csv")
+```
+
+```{r Cases Dimension Check, echo=TRUE}
+#Identify number of records
+dim(cases)
+```
+```{r Initial Data Summary, echo=TRUE}
 #view customer data
 summary(customers)
 ```
