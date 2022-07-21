@@ -1,6 +1,6 @@
 ---
 title: "Customer Data Analysis"
-output: html_notebook
+output: rmarkdown::github_document
 ---
 ```{r Loading Data}
 # load data
