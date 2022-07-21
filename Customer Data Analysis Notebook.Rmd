@@ -4,13 +4,13 @@ output: html_notebook
 ---
 
 
-```{r}
+```{r Loading Data}
 # load data
 customers <- read.csv("data/customer_info.csv")
 ```
 
 
-```{r}
+```{r Initial Data Summary, echo=TRUE}
 #view customer data
 summary(customers)
 ```
