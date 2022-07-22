@@ -372,8 +372,19 @@ str(churn_data)
 ```
 
 ```{r}
+summary(churn_data)
+```
+
+```{r}
+#convert churn column type to factor
+churn_data$dayIn <- factor(churn_data$dayIn)
+churn_data$hourIn <- factor(churn_data$hourIn)
+churn_data$minuteIn <- factor(churn_data$minuteIn)
+```
+
+```{r}
 set.seed(427) #setting seed 
-train_sample <- sample(508932, 480000)
+train_sample <- sample(508932, 470000)
 
 #view train sample data type structure
 str(train_sample)
@@ -399,10 +410,34 @@ library(C50)
 ```
 
 ```{r}
-churn_model <- C5.0(churn_train[-11],churn_train$churn,control = C5.0Control(minCases = 200))
+churn_model <- C5.0(churn_train[-11],churn_train$churn,control = C5.0Control(minCases = 2000))
 
 churn_model
 ```
 
+```{r}
 #display detailed info about the tree
-summary()
+summary(churn_model)
+
+#plot the tree
+#plot(churn_model) #gives unresolved error
+```
+
+```{r}
+install.packages("gmodels") 
+library(gmodels)
+```
+
+
+```{r}
+## Step 3: Evaluating model performance by using test data 
+# create a factor vector of predictions on test data
+churn_pred <- predict(churn_model,churn_test)
+
+# cross tabulation of predicted versus actual classes
+CrossTable(churn_test$churn, churn_pred, 
+           prop.chisq = FALSE, prop.c = FALSE, prop.r = FALSE,
+           dnn = c('actual default','predicted default'))
+
+```
+
