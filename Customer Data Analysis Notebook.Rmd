@@ -346,3 +346,34 @@ str(test_customers)
 consolidated_modified$churn <- ifelse(is.na(consolidated_modified$cancel_date_time),"No", "Yes")
 ```
 
+```{r}
+#convert churn column type to factor
+consolidated_modified$churn <- factor(consolidated_modified$churn)
+```
+
+```{r}
+str(consolidated_modified)
+```
+
+```{r}
+#look at some characeristics
+summary(consolidated_modified$subscription)
+```
+
+```{r}
+#looking at the dependent variable (binary - Churn or not)
+summary(consolidated_modified$churn)
+```
+
+```{r}
+set.seed(427) #setting seed 
+train_sample <- sample(500000, 480000)
+
+#view train sample data type structure
+str(train_sample)
+```
+
+```{r}
+
+```
+
