@@ -7,14 +7,15 @@ output: rmarkdown::github_document
 customers <- read.csv("data/customer_info.csv")
 ```
 
-```{r CustomerDimension Check, echo=TRUE}
+```{r Dimension Check, echo=TRUE, message=TRUE, warning=FALSE}
 #Identify number of records
 dim(customers)
 ```
-```{r Initial Data Summary, echo=TRUE}
+```{r Data Summary, echo=TRUE, message=FALSE, warning=FALSE}
 #view customer data
 summary(customers)
 ```
+
 ```{r}
 #Cleaning of Customer Data
 
@@ -33,27 +34,82 @@ summary(customers_clean)
 head(customers_clean)
 ```
 
-```{r Product data loading, message=FALSE, warning=FALSE}
+```{r}
+str(customers_clean)
+```
+
+```{r Loading Data, message=FALSE, warning=FALSE}
 # load product data
 products <- read.csv("data/product_info.csv")
 ```
 
-```{r}
+```{r Data Summary, message=FALSE, warning=FALSE}
 #view products data
 summary(products)
 ```
 
 ```{r}
+# Load the readr package
+library(readr)
+```
+
+
+```{r Loading Data, message=FALSE, warning=FALSE}
 # load cases data
 cases <- read.csv("data/customer_cases.csv")
 ```
 
-```{r Cases Dimension Check, echo=TRUE}
+```{r Dimension Check, echo=TRUE}
 #Identify number of records
 dim(cases)
 ```
-```{r Initial Data Summary, echo=TRUE}
-#view customer data
-summary(customers)
+
+```{r Data Summary, echo=TRUE, message=FALSE, warning=FALSE}
+#view cases data summary
+summary(cases)
 ```
 
+```{r}
+#seeing that date time comes in as character
+# bring in lubridate to handle datetime
+library(lubridate, warn.conflicts = FALSE)
+```
+
+
+```{r}
+#Cleaning of Cases Data
+
+#remove unwanted column
+cases_clean <- cases[,c(2:6)]
+
+#convert reason & Channel column type to factor
+cases_clean$reason <- factor(cases$reason)
+cases_clean$channel <- factor(cases$channel)
+
+#convert the date time column to datetime type
+cases_clean$date_time <- ymd_hms(cases$date_time)
+```
+
+```{r}
+#check the data types of cases data again
+summary(cases_clean)
+```
+
+```{r}
+str(cases_clean)
+```
+
+```{r Loading Data, message=FALSE, warning=FALSE}
+# load customer product data
+customer_products <- read.csv("data/customer_product.csv")
+```
+
+```{r Dimension Check, echo=TRUE, message=TRUE, warning=FALSE}
+#Identify number of records
+dim(customer_products)
+```
+
+```{r Data Summary, echo=TRUE, message=FALSE, warning=FALSE}
+#view cases data summary
+summary(customer_products)
+```
