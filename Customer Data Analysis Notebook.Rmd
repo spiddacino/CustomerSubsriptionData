@@ -29,6 +29,7 @@ customers_clean <- customers[,c(2:4)]
 #view summary of cleaned data
 summary(customers_clean)
 ```
+
 ```{r}
 #view a subset of cleaned data
 head(customers_clean)
@@ -83,11 +84,11 @@ library(lubridate, warn.conflicts = FALSE)
 cases_clean <- cases[,c(2:6)]
 
 #convert reason & Channel column type to factor
-cases_clean$reason <- factor(cases$reason)
-cases_clean$channel <- factor(cases$channel)
+cases_clean$reason <- factor(cases_clean$reason)
+cases_clean$channel <- factor(cases_clean$channel)
 
 #convert the date time column to datetime type
-cases_clean$date_time <- ymd_hms(cases$date_time)
+cases_clean$date_time <- ymd_hms(cases_clean$date_time)
 ```
 
 ```{r}
@@ -113,3 +114,39 @@ dim(customer_products)
 #view cases data summary
 summary(customer_products)
 ```
+
+```{r}
+#Cleaning of Customer Product Data
+
+#remove unwanted column
+customer_product_clean <- customer_products[,c(2:5)]
+
+#convert the date time column to datetime type
+customer_product_clean$signup_date_time <- ymd_hms(customer_product_clean$signup_date_time)
+customer_product_clean$cancel_date_time <- ymd_hms(customer_product_clean$cancel_date_time)
+```
+
+```{r Data Summary, echo=TRUE, message=FALSE, warning=FALSE}
+#view cases data summary
+summary(customer_product_clean)
+```
+
+```{r}
+str(customer_product_clean)
+```
+
+```{r}
+#Descriptive Information
+#Average age of customers based on gender
+with(customers_clean, by(age, gender, mean))
+```
+
+```{r}
+#loading ggplot library
+library(ggplot2)
+```
+
+```{r Plot, echo=TRUE, message=FALSE, warning=FALSE}
+ggplot(customers_clean,aes(y=age, x=gender )) + geom_boxplot() + coord_flip()
+```
+
