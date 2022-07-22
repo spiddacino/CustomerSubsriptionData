@@ -219,5 +219,115 @@ consolidated_modified$AMPMOut <- factor(consolidated_modified$AMPMOut)
 ```
 
 ```{r}
+#Creating dataframe for cancellations of suscriptions
+consolidated_cancellation <- consolidated_modified
+consolidated_cancellation <-na.omit(consolidated_cancellation)
+
+head(consolidated_cancellation)
+str(consolidated_cancellation)
+```
+
+
+```{r}
 str(consolidated_modified)
 ```
+
+```{r}
+summary(consolidated_modified)
+```
+
+```{r}
+install.packages("patchwork")
+library(patchwork)
+```
+
+```{r}
+summary(consolidated_modified$subscription)
+summary(consolidated_modified$yearIn)
+```
+
+
+```{r}
+plot1 <- ggplot(consolidated_modified,aes(x=subscription, fill=subscription)) + geom_bar(stat = "count")
+plot2 <- ggplot(consolidated_modified,aes(x=yearIn)) + geom_bar(stat = "count")
+
+plot1 + plot2
+```
+
+```{r}
+plot3 <- ggplot(consolidated_modified,aes(x=subscription, fill=gender)) + geom_bar(stat = "count")
+plot4 <- ggplot(consolidated_modified,aes(x=yearIn, fill=gender)) + geom_bar(stat = "count")
+plot5 <- ggplot(consolidated_modified,aes(x=monthIn, fill=gender)) + geom_bar(stat = "count")
+plot3 + plot4 + plot5
+```
+
+```{r message=FALSE, warning=FALSE}
+library(cowplot)
+```
+
+```{r}
+plot3 <- ggplot(consolidated_modified,aes(x=subscription, fill=gender)) + geom_bar(stat = "count")
+plot4 <- ggplot(consolidated_modified,aes(x=yearIn, fill=gender)) + geom_bar(stat = "count")
+plot5 <- ggplot(consolidated_modified,aes(x=monthIn, fill=gender)) + geom_bar(stat = "count")
+plot_grid(plot3, plot4, plot5, labels = "AUTO")
+
+```
+
+
+```{r}
+ggplot(consolidated_modified,aes(x=yearOut, fill= gender)) + geom_bar(stat = "count")
+```
+
+```{r}
+ggplot(consolidated_modified,aes(x=monthIn, fill = gender)) + geom_bar(stat = "count") + coord_flip()
+```
+```{r}
+ggplot(consolidated_cancellation,aes(x=monthOut, fill = gender)) + geom_bar(stat = "count") + coord_flip()
+```
+
+```{r}
+ggplot(consolidated_modified,aes(x=yearIn)) + geom_bar(stat = "count") + ggtitle("Signup Annual Frequency")
+```
+```{r}
+ggplot(consolidated_cancellation,aes(x=yearOut)) + geom_bar(stat = "count") + ggtitle("Cancellation Annual Frequency")
+```
+
+
+```{r}
+ggplot(consolidated_modified,aes(x=monthIn, fill=subscription)) + geom_bar(stat = "count") + ggtitle("Signup Monthly Frequency")
+```
+```{r}
+ggplot(consolidated_cancellation,aes(x=monthOut, fill=subscription)) + geom_bar(stat = "count") + ggtitle("Cancellation Monthly Frequency")
+```
+
+
+```{r}
+ggplot(consolidated_modified,aes(x=dayNameIn, fill=subscription)) + geom_bar(stat = "count") + ggtitle("Signup by Day of the Week")
+```
+```{r}
+ggplot(consolidated_cancellation,aes(x=dayNameOut, fill=subscription)) + geom_bar(stat = "count") + ggtitle("Cancellation by Day of the Week")
+```
+
+```{r}
+ggplot(consolidated_modified,aes(x=dayIn, fill=subscription)) + geom_bar(stat = "count") + ggtitle("Signup by Day of the Month")
+```
+```{r}
+ggplot(consolidated_cancellation,aes(x=dayOut, fill=subscription)) + geom_bar(stat = "count") + ggtitle("Cancellation by Day of the Month")
+```
+
+```{r}
+ggplot(consolidated_modified,aes(x=hourIn, fill=subscription)) + geom_bar(stat = "count") + ggtitle("Signup by Time of the Day")
+```
+
+```{r}
+ggplot(consolidated_cancellation,aes(x=hourOut, fill=subscription)) + geom_bar(stat = "count") + ggtitle("Cancellation by Time of the Day")
+```
+```{r}
+ggplot(consolidated_modified,aes(x=AMPMIn, fill=subscription)) + geom_bar(stat = "count") + ggtitle("Signup by Period of the Day")
+```
+```{r}
+ggplot(consolidated_cancellation,aes(x=AMPMOut, fill=subscription)) + geom_bar(stat = "count") + ggtitle("Cancellation by Period of the Day")
+```
+
+
+
