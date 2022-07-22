@@ -374,6 +374,14 @@ str(train_sample)
 ```
 
 ```{r}
+#splitting data for training and testing
+churn_train <- consolidated_modified[train_sample,] #training data
+churn_test <- consolidated_modified[-train_sample,] #test data
+```
 
+```{r}
+# check the proportion of class variable
+prop.table(summary(churn_train$churn))
+prop.table(summary(churn_test$churn))
 ```
 
