@@ -7,6 +7,7 @@ output: rmarkdown::github_document
 customers <- read.csv("data/customer_info.csv")
 ```
 
+
 ```{r Customer Dimension Check, echo=TRUE, message=TRUE, warning=FALSE}
 #Identify number of records
 dim(customers)
@@ -225,6 +226,7 @@ consolidated_cancellation <-na.omit(consolidated_cancellation)
 
 head(consolidated_cancellation)
 str(consolidated_cancellation)
+summary(consolidated_cancellation)
 ```
 
 
@@ -275,7 +277,7 @@ plot_grid(plot3, plot4, plot5, labels = "AUTO")
 
 
 ```{r}
-ggplot(consolidated_modified,aes(x=yearOut, fill= gender)) + geom_bar(stat = "count")
+ggplot(consolidated_cancellation,aes(x=yearOut, fill= gender)) + geom_bar(stat = "count")
 ```
 
 ```{r}
@@ -330,4 +332,17 @@ ggplot(consolidated_cancellation,aes(x=AMPMOut, fill=subscription)) + geom_bar(s
 ```
 
 
+
+
+```{r Loading Custoemr Data}
+# load customer data
+test_customers <- read.csv("data/customer_cases.csv", stringsAsFactors = TRUE)
+str(test_customers)
+```
+
+
+```{r}
+#create churn status column
+consolidated_modified$churn <- ifelse(is.na(consolidated_modified$cancel_date_time),"No", "Yes")
+```
 
