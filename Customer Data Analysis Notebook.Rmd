@@ -366,8 +366,14 @@ summary(consolidated_modified$churn)
 ```
 
 ```{r}
+#isolating data fro tree classification
+churn_data <- consolidated_modified[,c(5,8,9,10,11,12,13,14,15,16,24)]
+str(churn_data)
+```
+
+```{r}
 set.seed(427) #setting seed 
-train_sample <- sample(500000, 480000)
+train_sample <- sample(508932, 480000)
 
 #view train sample data type structure
 str(train_sample)
@@ -375,8 +381,8 @@ str(train_sample)
 
 ```{r}
 #splitting data for training and testing
-churn_train <- consolidated_modified[train_sample,] #training data
-churn_test <- consolidated_modified[-train_sample,] #test data
+churn_train <- churn_data[train_sample,] #training data
+churn_test <- churn_data[-train_sample,] #test data
 ```
 
 ```{r}
@@ -385,3 +391,18 @@ prop.table(summary(churn_train$churn))
 prop.table(summary(churn_test$churn))
 ```
 
+```{r}
+#training a model on the data
+#load C50 library
+install.packages("C50")
+library(C50)
+```
+
+```{r}
+churn_model <- C5.0(churn_train[-11],churn_train$churn,control = C5.0Control(minCases = 200))
+
+churn_model
+```
+
+#display detailed info about the tree
+summary()
