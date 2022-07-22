@@ -2,21 +2,21 @@
 title: "Customer Data Analysis"
 output: rmarkdown::github_document
 ---
-```{r Loading Data}
+```{r Loading Custoemr Data}
 # load customer data
 customers <- read.csv("data/customer_info.csv")
 ```
 
-```{r Dimension Check, echo=TRUE, message=TRUE, warning=FALSE}
+```{r Customer Dimension Check, echo=TRUE, message=TRUE, warning=FALSE}
 #Identify number of records
 dim(customers)
 ```
-```{r Data Summary, echo=TRUE, message=FALSE, warning=FALSE}
+```{r Customer Initil Data Summary, echo=TRUE, message=FALSE, warning=FALSE}
 #view customer data
 summary(customers)
 ```
 
-```{r}
+```{r Cleaninf Customer data}
 #Cleaning of Customer Data
 
 #convert gender column type to factor
@@ -25,12 +25,12 @@ customers$gender <- factor(customers$gender)
 customers_clean <- customers[,c(2:4)]
 ```
 
-```{r}
+```{r Cleaned Customer data summary}
 #view summary of cleaned data
 summary(customers_clean)
 ```
 
-```{r}
+```{r View Customer head}
 #view a subset of cleaned data
 head(customers_clean)
 ```
@@ -39,45 +39,45 @@ head(customers_clean)
 str(customers_clean)
 ```
 
-```{r Loading Data, message=FALSE, warning=FALSE}
+```{r Loading product Data, message=FALSE, warning=FALSE}
 # load product data
 products <- read.csv("data/product_info.csv")
 ```
 
-```{r Data Summary, message=FALSE, warning=FALSE}
+```{r Product Data Summary, message=FALSE, warning=FALSE}
 #view products data
 summary(products)
 ```
 
-```{r}
+```{r Loading readr}
 # Load the readr package
 library(readr)
 ```
 
 
-```{r Loading Data, message=FALSE, warning=FALSE}
+```{r Loading Cases Data, message=FALSE, warning=FALSE}
 # load cases data
 cases <- read.csv("data/customer_cases.csv")
 ```
 
-```{r Dimension Check, echo=TRUE}
+```{r Cases Dimension Check, echo=TRUE}
 #Identify number of records
 dim(cases)
 ```
 
-```{r Data Summary, echo=TRUE, message=FALSE, warning=FALSE}
+```{r Cases initial Data Summary, echo=TRUE, message=FALSE, warning=FALSE}
 #view cases data summary
 summary(cases)
 ```
 
-```{r}
+```{r Loading Lubridate}
 #seeing that date time comes in as character
 # bring in lubridate to handle datetime
 library(lubridate, warn.conflicts = FALSE)
 ```
 
 
-```{r}
+```{r Cleaning cases Data}
 #Cleaning of Cases Data
 
 #remove unwanted column
@@ -91,31 +91,31 @@ cases_clean$channel <- factor(cases_clean$channel)
 cases_clean$date_time <- ymd_hms(cases_clean$date_time)
 ```
 
-```{r}
+```{r Final Cases summary}
 #check the data types of cases data again
 summary(cases_clean)
 ```
 
-```{r}
+```{r Cases data type view}
 str(cases_clean)
 ```
 
-```{r Loading Data, message=FALSE, warning=FALSE}
+```{r Loading Customer Product Data, message=FALSE, warning=FALSE}
 # load customer product data
 customer_products <- read.csv("data/customer_product.csv")
 ```
 
-```{r Dimension Check, echo=TRUE, message=TRUE, warning=FALSE}
+```{r Customer Product Dimension Check, echo=TRUE, message=TRUE, warning=FALSE}
 #Identify number of records
 dim(customer_products)
 ```
 
-```{r Data Summary, echo=TRUE, message=FALSE, warning=FALSE}
+```{r Customer Product Data Summary, echo=TRUE, message=FALSE, warning=FALSE}
 #view cases data summary
 summary(customer_products)
 ```
 
-```{r}
+```{r Cleaning of Customer Product Data}
 #Cleaning of Customer Product Data
 
 #remove unwanted column
@@ -126,27 +126,98 @@ customer_product_clean$signup_date_time <- ymd_hms(customer_product_clean$signup
 customer_product_clean$cancel_date_time <- ymd_hms(customer_product_clean$cancel_date_time)
 ```
 
-```{r Data Summary, echo=TRUE, message=FALSE, warning=FALSE}
+```{r Final Cleaning of Customer Product Data Summary, echo=TRUE, message=FALSE, warning=FALSE}
 #view cases data summary
 summary(customer_product_clean)
 ```
 
-```{r}
+```{r Viewing of Customer Product Data type}
 str(customer_product_clean)
 ```
 
-```{r}
+```{r cleaned cusomer descriptive data}
 #Descriptive Information
 #Average age of customers based on gender
 with(customers_clean, by(age, gender, mean))
 ```
 
-```{r}
+```{r loadong ggplot}
 #loading ggplot library
 library(ggplot2)
 ```
 
-```{r Plot, echo=TRUE, message=FALSE, warning=FALSE}
-ggplot(customers_clean,aes(y=age, x=gender )) + geom_boxplot() + coord_flip()
+```{r Plotting demographics, echo=TRUE, message=FALSE, warning=FALSE}
+ggplot(customers_clean,aes(y=age, x=gender, fill=gender )) + geom_boxplot() + coord_flip()+ scale_fill_brewer(palette = "Set1")
 ```
 
+```{r Renaming some columns}
+#rename product column in customer_product to product_id
+colnames(customer_product_clean)[2] <- "product_id"
+#rename name column in product to subscription
+colnames(products)[2] <- "subscription"
+```
+
+```{r Data Consolidation}
+#combining data frames (customer product clean and products)
+customer_consolidated_data = merge(x=customer_product_clean, y=products, by ="product_id", all.x = TRUE)
+#combining data frames (customer consolidated data and customer data)
+customer_consolidated_data = merge(x=customer_consolidated_data, y=customers_clean, by ="customer_id", all.x = TRUE)
+head(customer_consolidated_data)
+```
+
+```{r viewing consolidated data summary}
+summary(customer_consolidated_data)
+```
+
+```{r}
+#duplicate dataframe for manipulation purpose
+consolidated_modified <- customer_consolidated_data
+```
+
+```{r SignUp analytic breakdown}
+#Signup analytic breakdown
+consolidated_modified$yearIn <- strftime(consolidated_modified$signup_date_time, "%Y")
+consolidated_modified$monthIn <- strftime(consolidated_modified$signup_date_time, "%h")
+consolidated_modified$dayIn <- strftime(consolidated_modified$signup_date_time, "%d")
+consolidated_modified$dayNameIn <- strftime(consolidated_modified$signup_date_time, "%a")
+consolidated_modified$hourIn <- strftime(consolidated_modified$signup_date_time, "%H")
+consolidated_modified$minuteIn <- strftime(consolidated_modified$signup_date_time, "%M")
+consolidated_modified$AMPMIn <- strftime(consolidated_modified$signup_date_time, "%p")
+```
+
+```{r Cancel analytic breakdown}
+#Signup analytic breakdown
+consolidated_modified$yearOut <- strftime(consolidated_modified$cancel_date_time, "%Y")
+consolidated_modified$monthOut <- strftime(consolidated_modified$cancel_date_time, "%h")
+consolidated_modified$dayOut <- strftime(consolidated_modified$cancel_date_time, "%d")
+consolidated_modified$dayNameOut <- strftime(consolidated_modified$cancel_date_time, "%a")
+consolidated_modified$hourOut <- strftime(consolidated_modified$cancel_date_time, "%H")
+consolidated_modified$minuteOut <- strftime(consolidated_modified$cancel_date_time, "%M")
+consolidated_modified$AMPMOut <- strftime(consolidated_modified$cancel_date_time, "%p")
+```
+
+```{r}
+str(consolidated_modified)
+```
+```{r}
+str(consolidated_modified)
+```
+
+
+```{r}
+#convert factorizable columns t factor
+consolidated_modified$product_id <- factor(consolidated_modified$product_id)
+consolidated_modified$subscription <- factor(consolidated_modified$subscription)
+consolidated_modified$yearIn <- factor(consolidated_modified$yearIn)
+consolidated_modified$yearOut <- factor(consolidated_modified$yearOut)
+consolidated_modified$monthIn <- factor(consolidated_modified$monthIn)
+consolidated_modified$monthOut <- factor(consolidated_modified$monthOut)
+consolidated_modified$dayNameIn <- factor(consolidated_modified$dayNameIn)
+consolidated_modified$dayNameOut <- factor(consolidated_modified$dayNameOut)
+consolidated_modified$AMPMIn <- factor(consolidated_modified$AMPMIn)
+consolidated_modified$AMPMOut <- factor(consolidated_modified$AMPMOut)
+```
+
+```{r}
+str(consolidated_modified)
+```
