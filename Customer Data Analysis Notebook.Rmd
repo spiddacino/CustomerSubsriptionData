@@ -2,26 +2,54 @@
 title: "Customer Data Analysis"
 output: rmarkdown::github_document
 ---
-```{r Loading Custoemr Data}
+```{r Loading Data, message=FALSE, warning=FALSE}
 # load customer data
-customers <- read.csv("data/customer_info.csv")
+customers <- read.csv("data/customer_info.csv", stringsAsFactors = TRUE)
+# load product data
+products <- read.csv("data/product_info.csv", stringsAsFactors = TRUE)
+# load customer product data
+customer_products <- read.csv("data/customer_product.csv")#, stringsAsFactors = TRUE)
 ```
-
 
 ```{r Customer Dimension Check, echo=TRUE, message=TRUE, warning=FALSE}
 #Identify number of records
 dim(customers)
+dim(products)
+dim(customer_products)
 ```
+
 ```{r Customer Initil Data Summary, echo=TRUE, message=FALSE, warning=FALSE}
 #view customer data
 summary(customers)
 ```
+```{r Product Initial Data Summary, echo=TRUE, message=FALSE, warning=FALSE}
+#view customer data
+summary(products)
+```
 
-```{r Cleaninf Customer data}
+```{r Customer Product Initial Data Summary, echo=TRUE, message=FALSE, warning=FALSE}
+#view customer data
+summary(customer_products)
+```
+
+```{r}
+#view customer data structure
+str(customers)
+```
+```{r}
+#view customer data structure
+str(products)
+```
+```{r}
+#view customer data structure
+str(customer_products)
+```
+
+
+
+```{r Cleaning Customer data}
 #Cleaning of Customer Data
 
-#convert gender column type to factor
-customers$gender <- factor(customers$gender)
 #remove unwanted column
 customers_clean <- customers[,c(2:4)]
 ```
@@ -37,83 +65,15 @@ head(customers_clean)
 ```
 
 ```{r}
-str(customers_clean)
-```
-
-```{r Loading product Data, message=FALSE, warning=FALSE}
-# load product data
-products <- read.csv("data/product_info.csv")
-```
-
-```{r Product Data Summary, message=FALSE, warning=FALSE}
-#view products data
-summary(products)
-```
-
-```{r Loading readr}
-# Load the readr package
-library(readr)
+#view data structure of customer product data
+str(customer_products)
 ```
 
 
-```{r Loading Cases Data, message=FALSE, warning=FALSE}
-# load cases data
-cases <- read.csv("data/customer_cases.csv")
-```
-
-```{r Cases Dimension Check, echo=TRUE}
-#Identify number of records
-dim(cases)
-```
-
-```{r Cases initial Data Summary, echo=TRUE, message=FALSE, warning=FALSE}
-#view cases data summary
-summary(cases)
-```
-
-```{r Loading Lubridate}
-#seeing that date time comes in as character
+```{r Loading Lubridate, message=FALSE, warning=FALSE}
+#seeing that date time comes in as factor
 # bring in lubridate to handle datetime
 library(lubridate, warn.conflicts = FALSE)
-```
-
-
-```{r Cleaning cases Data}
-#Cleaning of Cases Data
-
-#remove unwanted column
-cases_clean <- cases[,c(2:6)]
-
-#convert reason & Channel column type to factor
-cases_clean$reason <- factor(cases_clean$reason)
-cases_clean$channel <- factor(cases_clean$channel)
-
-#convert the date time column to datetime type
-cases_clean$date_time <- ymd_hms(cases_clean$date_time)
-```
-
-```{r Final Cases summary}
-#check the data types of cases data again
-summary(cases_clean)
-```
-
-```{r Cases data type view}
-str(cases_clean)
-```
-
-```{r Loading Customer Product Data, message=FALSE, warning=FALSE}
-# load customer product data
-customer_products <- read.csv("data/customer_product.csv")
-```
-
-```{r Customer Product Dimension Check, echo=TRUE, message=TRUE, warning=FALSE}
-#Identify number of records
-dim(customer_products)
-```
-
-```{r Customer Product Data Summary, echo=TRUE, message=FALSE, warning=FALSE}
-#view cases data summary
-summary(customer_products)
 ```
 
 ```{r Cleaning of Customer Product Data}
@@ -125,30 +85,6 @@ customer_product_clean <- customer_products[,c(2:5)]
 #convert the date time column to datetime type
 customer_product_clean$signup_date_time <- ymd_hms(customer_product_clean$signup_date_time)
 customer_product_clean$cancel_date_time <- ymd_hms(customer_product_clean$cancel_date_time)
-```
-
-```{r Final Cleaning of Customer Product Data Summary, echo=TRUE, message=FALSE, warning=FALSE}
-#view cases data summary
-summary(customer_product_clean)
-```
-
-```{r Viewing of Customer Product Data type}
-str(customer_product_clean)
-```
-
-```{r cleaned cusomer descriptive data}
-#Descriptive Information
-#Average age of customers based on gender
-with(customers_clean, by(age, gender, mean))
-```
-
-```{r loadong ggplot}
-#loading ggplot library
-library(ggplot2)
-```
-
-```{r Plotting demographics, echo=TRUE, message=FALSE, warning=FALSE}
-ggplot(customers_clean,aes(y=age, x=gender, fill=gender )) + geom_boxplot() + coord_flip()+ scale_fill_brewer(palette = "Set1")
 ```
 
 ```{r Renaming some columns}
@@ -163,17 +99,19 @@ colnames(products)[2] <- "subscription"
 customer_consolidated_data = merge(x=customer_product_clean, y=products, by ="product_id", all.x = TRUE)
 #combining data frames (customer consolidated data and customer data)
 customer_consolidated_data = merge(x=customer_consolidated_data, y=customers_clean, by ="customer_id", all.x = TRUE)
+
 head(customer_consolidated_data)
 ```
 
-```{r viewing consolidated data summary}
-summary(customer_consolidated_data)
+```{r Viewing of Customer Product Data type}
+str(customer_consolidated_data)
 ```
 
 ```{r}
 #duplicate dataframe for manipulation purpose
 consolidated_modified <- customer_consolidated_data
 ```
+
 
 ```{r SignUp analytic breakdown}
 #Signup analytic breakdown
@@ -200,15 +138,9 @@ consolidated_modified$AMPMOut <- strftime(consolidated_modified$cancel_date_time
 ```{r}
 str(consolidated_modified)
 ```
-```{r}
-str(consolidated_modified)
-```
-
 
 ```{r}
-#convert factorizable columns t factor
-consolidated_modified$product_id <- factor(consolidated_modified$product_id)
-consolidated_modified$subscription <- factor(consolidated_modified$subscription)
+#convert factorizable columns to factor
 consolidated_modified$yearIn <- factor(consolidated_modified$yearIn)
 consolidated_modified$yearOut <- factor(consolidated_modified$yearOut)
 consolidated_modified$monthIn <- factor(consolidated_modified$monthIn)
@@ -220,7 +152,26 @@ consolidated_modified$AMPMOut <- factor(consolidated_modified$AMPMOut)
 ```
 
 ```{r}
-#Creating dataframe for cancellations of suscriptions
+str(consolidated_modified)
+```
+
+```{r gender descriptive data}
+#Descriptive Information
+#Average age of customers based on gender
+with(consolidated_modified, by(age, gender, mean))
+```
+
+```{r loadong ggplot, message=FALSE, warning=FALSE}
+#loading ggplot library
+library(ggplot2)
+```
+
+```{r Plotting demographics, echo=TRUE, message=FALSE, warning=FALSE}
+ggplot(consolidated_modified,aes(y=age, x=gender, fill=gender )) + geom_boxplot() + coord_flip()+ scale_fill_brewer(palette = "Set1")
+```
+
+```{r}
+#Creating dataframe for cancellations of subscriptions
 consolidated_cancellation <- consolidated_modified
 consolidated_cancellation <-na.omit(consolidated_cancellation)
 
@@ -229,17 +180,8 @@ str(consolidated_cancellation)
 summary(consolidated_cancellation)
 ```
 
-
-```{r}
-str(consolidated_modified)
-```
-
-```{r}
-summary(consolidated_modified)
-```
-
-```{r}
-install.packages("patchwork")
+```{r message=FALSE, warning=FALSE}
+#install.packages("patchwork")
 library(patchwork)
 ```
 
@@ -257,32 +199,13 @@ plot1 + plot2
 ```
 
 ```{r}
-plot3 <- ggplot(consolidated_modified,aes(x=subscription, fill=gender)) + geom_bar(stat = "count")
-plot4 <- ggplot(consolidated_modified,aes(x=yearIn, fill=gender)) + geom_bar(stat = "count")
-plot5 <- ggplot(consolidated_modified,aes(x=monthIn, fill=gender)) + geom_bar(stat = "count")
-plot3 + plot4 + plot5
-```
-
-```{r message=FALSE, warning=FALSE}
-library(cowplot)
-```
-
-```{r}
-plot3 <- ggplot(consolidated_modified,aes(x=subscription, fill=gender)) + geom_bar(stat = "count")
-plot4 <- ggplot(consolidated_modified,aes(x=yearIn, fill=gender)) + geom_bar(stat = "count")
-plot5 <- ggplot(consolidated_modified,aes(x=monthIn, fill=gender)) + geom_bar(stat = "count")
-plot_grid(plot3, plot4, plot5, labels = "AUTO")
-
-```
-
-
-```{r}
 ggplot(consolidated_cancellation,aes(x=yearOut, fill= gender)) + geom_bar(stat = "count")
 ```
 
 ```{r}
 ggplot(consolidated_modified,aes(x=monthIn, fill = gender)) + geom_bar(stat = "count") + coord_flip()
 ```
+
 ```{r}
 ggplot(consolidated_cancellation,aes(x=monthOut, fill = gender)) + geom_bar(stat = "count") + coord_flip()
 ```
@@ -298,6 +221,7 @@ ggplot(consolidated_cancellation,aes(x=yearOut)) + geom_bar(stat = "count") + gg
 ```{r}
 ggplot(consolidated_modified,aes(x=monthIn, fill=subscription)) + geom_bar(stat = "count") + ggtitle("Signup Monthly Frequency")
 ```
+
 ```{r}
 ggplot(consolidated_cancellation,aes(x=monthOut, fill=subscription)) + geom_bar(stat = "count") + ggtitle("Cancellation Monthly Frequency")
 ```
@@ -332,21 +256,12 @@ ggplot(consolidated_cancellation,aes(x=AMPMOut, fill=subscription)) + geom_bar(s
 ```
 
 
-
-
-```{r Loading Custoemr Data}
-# load customer data
-test_customers <- read.csv("data/customer_cases.csv", stringsAsFactors = TRUE)
-str(test_customers)
-```
-
-
-```{r}
+```{r Creating churn status Column}
 #create churn status column
 consolidated_modified$churn <- ifelse(is.na(consolidated_modified$cancel_date_time),"No", "Yes")
 ```
 
-```{r}
+```{r convert churn column type to factor}
 #convert churn column type to factor
 consolidated_modified$churn <- factor(consolidated_modified$churn)
 ```
@@ -355,34 +270,35 @@ consolidated_modified$churn <- factor(consolidated_modified$churn)
 str(consolidated_modified)
 ```
 
-```{r}
+```{r viewing subscription characeristics, echo=TRUE}
 #look at some characeristics
 summary(consolidated_modified$subscription)
 ```
 
-```{r}
+```{r Churn Characteristics}
 #looking at the dependent variable (binary - Churn or not)
 summary(consolidated_modified$churn)
 ```
 
-```{r}
-#isolating data fro tree classification
+
+```{r isolating data for tree classification, echo=TRUE}
+#isolating data for tree classification
 churn_data <- consolidated_modified[,c(5,8,9,10,11,12,13,14,15,16,24)]
 str(churn_data)
 ```
 
-```{r}
+```{r Summarizing churn Data, echo=TRUE}
 summary(churn_data)
 ```
 
 ```{r}
-#convert churn column type to factor
+#convert some column type to factor
 churn_data$dayIn <- factor(churn_data$dayIn)
 churn_data$hourIn <- factor(churn_data$hourIn)
 churn_data$minuteIn <- factor(churn_data$minuteIn)
 ```
 
-```{r}
+```{r Seeding for training}
 set.seed(427) #setting seed 
 train_sample <- sample(508932, 470000)
 
@@ -390,32 +306,32 @@ train_sample <- sample(508932, 470000)
 str(train_sample)
 ```
 
-```{r}
+```{r splitting data for training and testing}
 #splitting data for training and testing
 churn_train <- churn_data[train_sample,] #training data
 churn_test <- churn_data[-train_sample,] #test data
 ```
 
-```{r}
+```{r check the proportion of class variable, echo=TRUE}
 # check the proportion of class variable
 prop.table(summary(churn_train$churn))
 prop.table(summary(churn_test$churn))
 ```
 
-```{r}
+```{r load C50 library, message=FALSE, warning=FALSE}
 #training a model on the data
 #load C50 library
-install.packages("C50")
+#install.packages("C50")
 library(C50)
 ```
 
-```{r}
+```{r Churn Model}
 churn_model <- C5.0(churn_train[-11],churn_train$churn,control = C5.0Control(minCases = 2000))
 
 churn_model
 ```
 
-```{r}
+```{r Summarizing Churn Model}
 #display detailed info about the tree
 summary(churn_model)
 
@@ -423,13 +339,13 @@ summary(churn_model)
 #plot(churn_model) #gives unresolved error
 ```
 
-```{r}
-install.packages("gmodels") 
+```{r Loading Gmodel library, message=FALSE, warning=FALSE}
+#install.packages("gmodels") 
 library(gmodels)
 ```
 
 
-```{r}
+```{r Evaluating model performance}
 ## Step 3: Evaluating model performance by using test data 
 # create a factor vector of predictions on test data
 churn_pred <- predict(churn_model,churn_test)
@@ -440,8 +356,3 @@ CrossTable(churn_test$churn, churn_pred,
            dnn = c('actual default','predicted default'))
 
 ```
-
-```{r}
-
-```
-
