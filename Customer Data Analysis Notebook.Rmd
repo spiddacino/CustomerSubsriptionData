@@ -167,7 +167,8 @@ library(ggplot2)
 ```
 
 ```{r Plotting demographics, echo=TRUE, message=FALSE, warning=FALSE}
-ggplot(consolidated_modified,aes(y=age, x=gender, fill=gender )) + geom_boxplot() + coord_flip()+ scale_fill_brewer(palette = "Set1")
+ggplot(consolidated_modified,aes(y=age, x=gender, fill=gender )) 
++ geom_boxplot() + coord_flip()+ scale_fill_brewer(palette = "Set1")
 ```
 
 ```{r}
